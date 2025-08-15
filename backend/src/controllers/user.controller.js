@@ -43,4 +43,47 @@ const registerUser = AsyncHandler(async (req, res) => {
     })
   );
 });
-export { registerUser };
+
+const loginUser = AsyncHandler(async (req, res) => {
+  //take input and validate
+  //find the user with username
+  //check the password
+  //generate tokens
+  //send user data with access token and refresh token
+
+  const { userName, password } = req.body;
+  if (!userName || !password) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const user = await User.findOne({ userName });
+  if (!user) {
+    throw new ApiError(401, "Invalid credentials");
+  }
+  const isPasswordCorrect = await user.isPasswordCorrect(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(401, "Invalid Password");
+  }
+  const refreshToken = user.generateRefreshToken();
+  const accessToken = user.generateAccessToken();
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, options)
+    .json(
+      new ApiResponse(200, "Login successful", {
+        user: loggedInUser,
+        accessToken,
+      })
+    );
+});
+export { registerUser, loginUser };
