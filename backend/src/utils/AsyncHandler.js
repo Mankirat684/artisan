@@ -4,7 +4,11 @@ const AsyncHandler = (fn)=>{
             await fn(req, res, next);
         } catch (error) {
             console.error("Error in async handler:", error);
-            res.status(500).json({ message: "Internal Server Error" });
+            if (error instanceof ApiError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: "Internal Server Error" });
+            }
         }
     }
 }
