@@ -8,7 +8,6 @@ const createProduct = AsyncHandler(async (req, res) => {
     title,
     description,
     images,
-    owner,
     price,
     quantity,
     category,
@@ -16,7 +15,9 @@ const createProduct = AsyncHandler(async (req, res) => {
     aiGenerated,
   } = req.body;
 
-  if (!title || !description || !images || !owner || !price || !quantity || !category) {
+  const owner = req.user._id;
+
+  if (!title || !description || !images || !price || !quantity || !category) {
     throw new ApiError(400, "All fields are required");
   }
 
