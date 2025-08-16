@@ -1,5 +1,8 @@
 import mongoose,{Schema} from "mongoose";
 
+//frontend mai fixed categories daalni hai yaad rkhio
+
+
 const productSchema = new Schema({
     title : {
         type: String,
