@@ -24,3 +24,4 @@ const verifyToken = AsyncHandler(async (req,res,next)=>{
    }
 
 })
+export { verifyToken };
