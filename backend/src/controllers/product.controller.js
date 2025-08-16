@@ -1,7 +1,7 @@
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/ApiError.js";
 import Product from "../models/product.model.js";
-import { ApiResponse } from "../utils/ApiResponse";
-import AsyncHandler from "../utils/AsyncHandler";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 const createProduct = AsyncHandler(async (req, res) => {
   const {
@@ -113,4 +113,17 @@ const deleteProduct = AsyncHandler(async (req,res)=>{
   res.json(new ApiResponse(200, "Product deleted successfully"));
 })
 
-export { createProduct, updateProduct, deleteProduct };
+const getAllProducts = AsyncHandler(async (req,res)=>{
+  //check user is logged in
+  //show user's products
+
+  if(!req.user){
+    throw new ApiError(401, "You must be logged in to view products");
+  }
+
+  const products = await Product.find({owner: req.user._id});
+  res
+  .json(new ApiResponse(200, "Products fetched successfully", products));
+})
+
+export { createProduct, updateProduct, deleteProduct, getAllProducts };
