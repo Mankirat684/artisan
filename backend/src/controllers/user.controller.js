@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import AsyncHandler from "../utils/AsyncHandler.js";
-import ApiResponse from "../utils/ApiResponse.js";
+import {ApiResponse} from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 
 const registerUser = AsyncHandler(async (req, res) => {
