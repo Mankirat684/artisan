@@ -41,6 +41,76 @@ const createProduct = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(201, "Product created successfully", product));
 });
 
+let updateProduct = AsyncHandler(async (req, res) => {
+  //check if product exists
+  //take new values
+  //resave the product with new values
+
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  
+  if (product.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to update this product");
+  }
 
 
-export { createProduct };
+  const {
+    title,
+    description,
+    images,
+    price,
+    quantity,
+    category,
+    isPublished,
+    aiGenerated,
+  } = req.body;
+
+  if (!title && !description && !images && price === undefined && quantity === undefined
+    && !category && typeof isPublished !== "boolean" && typeof aiGenerated !== "boolean") {
+  throw new ApiError(400, "No valid fields provided for update");
+}
+
+
+  if (title) product.title = title;
+  if (description) product.description = description;
+  if (images) product.images = images;
+  if (price !== undefined) {
+    if (price < 0) throw new ApiError(400, "Price cannot be negative");
+    product.price = price;
+  }
+  if (quantity !== undefined) {
+    if (quantity < 0) throw new ApiError(400, "Quantity cannot be negative");
+    product.quantity = quantity;
+  }
+  if (category) product.category = category;
+  if (typeof isPublished === "boolean") product.isPublished = isPublished;
+  if (typeof aiGenerated === "boolean") product.aiGenerated = aiGenerated;
+
+  await product.save();
+
+  res.json(new ApiResponse(200, "Product updated successfully", product));
+});
+
+const deleteProduct = AsyncHandler(async (req,res)=>{
+  //check if product exist
+  //verify product owner 
+  //remove that product from database
+
+  const product = await Product.findById(req.params.id);
+  if(!product){
+    throw new ApiError(404, "Product not found");
+  };
+
+  if (product.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to delete this product");
+  }
+
+  await product.deleteOne();
+
+  res.json(new ApiResponse(200, "Product deleted successfully"));
+})
+
+export { createProduct, updateProduct, deleteProduct };
