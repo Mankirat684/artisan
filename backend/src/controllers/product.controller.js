@@ -126,4 +126,17 @@ const getAllProducts = AsyncHandler(async (req,res)=>{
   .json(new ApiResponse(200, "Products fetched successfully", products));
 })
 
-export { createProduct, updateProduct, deleteProduct, getAllProducts };
+const getProductById = AsyncHandler(async (req, res) => {
+  //check if product exists
+  //check if product owner is user himself
+  //send product details
+  const product = await Product.findById(req.params.id);
+  if(!product){
+    throw new ApiError(404, "Product not found");
+  }
+  if (product.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to view this product");
+  }
+  res.json(new ApiResponse(200, "Product fetched successfully", product));
+})
+export { createProduct, updateProduct, deleteProduct, getAllProducts, getProductById };
