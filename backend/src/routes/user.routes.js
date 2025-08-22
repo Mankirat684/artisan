@@ -7,8 +7,6 @@ const router = Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/", verifyToken, createProduct);
-router.put("/:id", verifyToken, updateProduct);
-router.delete("/:id", verifyToken, deleteProduct);
+
 
 export default router;

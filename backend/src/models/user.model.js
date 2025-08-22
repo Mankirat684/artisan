@@ -24,7 +24,7 @@ const userSchema = new Schema({
     password:{
         type: String,
         required: [true, 'Password is required'],
-        minlength: [8, 'Password must be at least 8 characters long'],
+        //98minlength: [8, 'Password must be at least 8 characters long'],
         trim: true,
     },
     refreshToken: {
